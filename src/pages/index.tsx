@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { NextPage, GetServerSideProps } from "next";
 
 async function fetchCatImage() {
     const jsonResult = await fetch("https://api.thecatapi.com/v1/images/search");
@@ -6,12 +7,16 @@ async function fetchCatImage() {
     return result[0];
 }
 
-const IndexPage = () => {
+interface IndexPageProps {
+    initialCatImageUrl: string;
+}
+
+const IndexPage: NextPage<IndexPageProps> = ({initialCatImageUrl}) => {
     // 猫の画像ギャラリーの添え字
     const [index, setIndex] = useState(0);
     // 猫の画像ギャラリーの URL リスト
     const [catImageUrls, setCatImageUrl] = useState(
-        ["https://cdn2.thecatapi.com/images/e6f.jpg"]
+        [initialCatImageUrl]
     );
 
     // リストの範囲内で 1 つずつ戻る
@@ -40,5 +45,14 @@ const IndexPage = () => {
         </>
     );
 };
+
+export const getServerSideProps: GetServerSideProps<IndexPageProps> = async () => {
+    const catImage = await fetchCatImage();
+    return {
+        props: {
+            initialCatImageUrl: catImage.url,
+        },
+    };
+}
 
 export default IndexPage;
