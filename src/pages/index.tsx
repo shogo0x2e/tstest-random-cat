@@ -1,16 +1,28 @@
 import { useState } from "react";
 import type { NextPage, GetServerSideProps } from "next";
 
+/**
+ * TheCatAPI から適当な画像の json を fetch する
+ * @returns パースした json
+ */
 async function fetchCatImage() {
     const jsonResult = await fetch("https://api.thecatapi.com/v1/images/search");
     const result = await jsonResult.json();
     return result[0];
 }
 
+/**
+ * 
+ */
 interface IndexPageProps {
     initialCatImageUrl: string;
 }
 
+/**
+ * ページの生成
+ * @param param0 getServerSideProps から取得したデータ (props) 
+ * @returns 生成したページ
+ */
 const IndexPage: NextPage<IndexPageProps> = ({initialCatImageUrl}) => {
     // 猫の画像ギャラリーの添え字
     const [index, setIndex] = useState(0);
@@ -46,6 +58,10 @@ const IndexPage: NextPage<IndexPageProps> = ({initialCatImageUrl}) => {
     );
 };
 
+/**
+ * ページのロード時に
+ * @returns 
+ */
 export const getServerSideProps: GetServerSideProps<IndexPageProps> = async () => {
     const catImage = await fetchCatImage();
     return {
